@@ -11,8 +11,8 @@ import java.util.Optional;
 public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByUsername(String username);
 
-    @Query(value = "{ 'id' : ?0, 'weeks.id' : ?1 }", fields = "{ 'weeks.id' : 1 }")
-    List<Week> findByUserIdAndWeeksId(String userId, String weekNumber);
+    @Query(value = "{ 'id' : ?0, 'weeks.id' : ?1 }")
+    Week findByUserAndWeekId(String userId, String weekId);
 
     Boolean existsByUsername(String username);
 
