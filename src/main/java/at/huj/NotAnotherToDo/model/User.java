@@ -8,7 +8,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Document(collection = "users")
@@ -32,6 +34,9 @@ public class User {
 
     @DBRef
     private Set<Role> roles = new HashSet<>();
+
+    @DBRef
+    private List<Week> weeks = new ArrayList<>();
 
     public User() {
     }
@@ -81,4 +86,22 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+    public List<Week> getWeeks() {
+        return weeks;
+    }
+
+    public void setWeeks(List<Week> weeks) {
+        this.weeks = weeks;
+    }
+
+    public void addWeek(Week w){
+        this.weeks.add(w);
+    }
+
+    public void removeWeek(Week w){
+        this.weeks.remove(w);
+    }
+
+
 }
