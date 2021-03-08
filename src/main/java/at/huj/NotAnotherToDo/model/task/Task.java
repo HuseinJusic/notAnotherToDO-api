@@ -8,22 +8,21 @@ public abstract class Task {
 
     @Id
     public String id;
+    private TaskType type;
 
     private Date dueDate;
-    private Date plannedCalenderWeek;
-    private boolean finished;
+    private boolean finished = false;
 
-    public Task(Date dueDate, Date plannedCalenderWeek) {
+    private String taskTitle;
+    private String taskDescription;
+
+    public Task(Date dueDate, TaskType type) {
         this.dueDate = dueDate;
-        this.plannedCalenderWeek = plannedCalenderWeek;
+        this.type = type;
     }
 
-    public Task(Date dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public Task() {
-
+    public Task(TaskType type) {
+        this.type = type;
     }
 
     public Date getDueDate() {
@@ -34,11 +33,43 @@ public abstract class Task {
         this.dueDate = dueDate;
     }
 
-    public Date getPlannedCalenderWeek() {
-        return plannedCalenderWeek;
+    public String getTaskTitle() {
+        return taskTitle;
     }
 
-    public void setPlannedCalenderWeek(Date plannedCalenderWeek) {
-        this.plannedCalenderWeek = plannedCalenderWeek;
+    public void setTaskTitle(String taskTitle) {
+        this.taskTitle = taskTitle;
+    }
+
+    public String getTaskDescription() {
+        return taskDescription;
+    }
+
+    public void setTaskDescription(String taskDescription) {
+        this.taskDescription = taskDescription;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public void setType(TaskType type) {
+        this.type = type;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public TaskType getType() {
+        return type;
     }
 }

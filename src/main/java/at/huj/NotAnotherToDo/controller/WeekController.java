@@ -1,7 +1,6 @@
 package at.huj.NotAnotherToDo.controller;
 
 import at.huj.NotAnotherToDo.model.User;
-import at.huj.NotAnotherToDo.model.Week;
 import at.huj.NotAnotherToDo.repository.UserRepository;
 import at.huj.NotAnotherToDo.repository.WeekRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class WeekController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
-        Week w = user.getWeekById(id);
+        Week w = userRepository.findWeeks(user.getId(), id).getWeeks().get(0);
         if(w.equals(null)){
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
@@ -57,16 +56,16 @@ public class WeekController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
-        Week removeWeek = userRepository.findByUserAndWeekId(user.getId(), id);
+        try{
+            Week removeWeek = userRepository.findWeeks(user.getId(), id).getWeeks().get(0);
 
-        if(user.removeWeekById(id)){
             weekRepository.delete(removeWeek);
             userRepository.save(user);
-        }else{
-            return new ResponseEntity<>(removeWeek, HttpStatus.NO_CONTENT);
-        }
 
-        return new ResponseEntity<>(removeWeek, HttpStatus.OK);
+            return new ResponseEntity<>(removeWeek, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        }
     }
 
     @PostMapping("/add")
@@ -96,7 +95,7 @@ public class WeekController {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }else{
             weekRepository.save(week);
-            return new ResponseEntity<>(user.getWeekById(week.id), HttpStatus.OK);
+            return new ResponseEntity<>(week, HttpStatus.OK);
         }
 
     }

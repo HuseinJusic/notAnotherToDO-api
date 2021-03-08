@@ -35,9 +35,6 @@ public class User {
     @DBRef
     private Set<Role> roles = new HashSet<>();
 
-    @DBRef
-    private List<Week> weeks = new ArrayList<>();
-
     public User() {
     }
 
@@ -85,57 +82,6 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
-    }
-
-    public List<Week> getWeeks() {
-        return weeks;
-    }
-
-    public void setWeeks(List<Week> weeks) {
-        this.weeks = weeks;
-    }
-
-    public void addWeek(Week w){
-        this.weeks.add(w);
-    }
-
-    public boolean removeWeek(Week w){
-        return weeks.remove(w);
-    }
-
-    public boolean removeWeekById(String weekId){
-
-        for(int i = 0; i < weeks.size(); i++){
-            if(weeks.get(i).getId().equals(weekId)){
-                weeks.remove(i);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public Week getWeekById(String weekId){
-
-        for(int i = 0; i < weeks.size(); i++){
-            if(weeks.get(i).getId().equals(weekId)){
-                return weeks.get(i);
-            }
-        }
-
-        return null;
-    }
-
-    public boolean updateWeek(Week week){
-
-        for(int i = 0; i < weeks.size(); i++){
-            if(weeks.get(i).getId().equals(week.getId())){
-                weeks.set(i, week);
-                return true;
-            }
-        }
-
-        return false;
     }
 
 }
