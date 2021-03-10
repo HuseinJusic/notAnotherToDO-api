@@ -13,7 +13,43 @@ public class TaskStatus {
 
     private List<Task> taskHistory = new ArrayList<>();
 
-    public TaskStatus(Task taskHistory) {
-        this.taskHistory.add(taskHistory);
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public boolean isFinishedOnTime() {
+        return finishedOnTime;
+    }
+
+    public void setFinishedOnTime(boolean finishedOnTime) {
+        this.finishedOnTime = finishedOnTime;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public Date getLastEdited() {
+        return lastEdited;
+    }
+
+    public void setLastEdited(Date lastEdited) {
+        this.lastEdited = lastEdited;
+    }
+
+    public List<Task> getTaskHistory() {
+        return taskHistory;
+    }
+
+    public void setTaskHistory(List<Task> taskHistory) {
+        this.taskHistory = taskHistory;
     }
 }

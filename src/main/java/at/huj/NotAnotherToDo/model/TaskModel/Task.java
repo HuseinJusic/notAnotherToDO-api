@@ -1,11 +1,11 @@
 package at.huj.NotAnotherToDo.model.TaskModel;
 
-import at.huj.NotAnotherToDo.model.Role;
+import at.huj.NotAnotherToDo.model.TaskModel.TaskBody.TaskBody;
+import at.huj.NotAnotherToDo.model.User;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,20 +20,37 @@ public class Task {
     private TaskStatus status;
 
     @DBRef
-    private final Set<Scale> scales = new HashSet<>();
+    private Category category;
+
+    @DBRef
+    private Set<Scale> scales = new HashSet<>();
+
+    @DBRef
+    private User user;
 
     public Task() {
-        this.status = new TaskStatus(this);
     }
 
-    public Task(TaskBody taskBody) {
-        this();
+    public Task(User user) {
+        this.user = user;
+    }
+
+    public Task(User user, TaskBody taskBody) {
+        this(user);
         this.taskBody = taskBody;
     }
 
-    public Task(Scedule scedule, TaskBody taskBody) {
-        this(taskBody);
+    public Task(User user, Scedule scedule, TaskBody taskBody) {
+        this(user, taskBody);
         this.scedule = scedule;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Scedule getScedule() {
@@ -63,4 +80,21 @@ public class Task {
     public Set<Scale> getScales() {
         return scales;
     }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setScales(Set<Scale> scales) {
+        this.scales = scales;
+    }
+
 }
