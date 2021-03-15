@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -44,17 +45,22 @@ public class TaskController {
     @PostMapping("/new")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public Task newTask(@RequestBody TaskRequest task) {
-        //TODO: fix creation of tasks.
+        //TODO: implement multitasks etc.
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         Task t = new Task(user, new SimpleTask());
         t.setStatus(new TaskStatus());
-        t.setScedule(new Scedule());
-        t.getScedule().setFrom(task.getDueDate());
-        t.getScedule().setTo(task.getDueDate());
         t.getTaskBody().setTaskTitle(task.getTaskTitle());
         t.getTaskBody().setTaskDescription(task.getTaskDescription());
+
+        if(task.getDueDate() != null){
+            t.setScedule(new Scedule(task.getDueDate()));
+        }else if(task.getRecurrence() != null && task.getRecurrence().size() > 0){
+            t.setScedule(new Scedule(task.getRecurrence()));
+        }else{
+            t.setScedule(new Scedule());
+        }
 
         return taskRepository.save(t);
     }
@@ -87,21 +93,67 @@ public class TaskController {
 
     @PostMapping("/remove")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public Task remove(@RequestBody String id) {
+    public Task remove(@RequestBody TaskRequest task) {
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
-        Task t = taskRepository.findByIdAndUser(id, user);
+        Task t = taskRepository.findByIdAndUser(task.getTaskId(), user);
 
         if(t != null){
             taskRepository.delete(t);
         }
+
+        //TODO: error handling
         return t;
     }
 
     /*
     TODO: ADD Methods like "toggleStatus" etc. to update the Task accordingly. The /update method should not be used in production.
      */
+
+    @PostMapping("/toggleTask")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public Task toggle(@RequestBody TaskRequest task) {
+
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(userDetails.getUsername()).get();
+
+        Task t = taskRepository.findByIdAndUser(task.getTaskId(), user);
+
+        if(t != null){
+            t.toggle();
+            taskRepository.save(t);
+        }
+        //TODO: add error handling (task not found...)
+        return t;
+    }
+
+    @PostMapping("/updateScedule")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public Task updateScedule(@RequestBody TaskRequest task) {
+
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(userDetails.getUsername()).get();
+
+        if(task.getTaskId() != null) {
+            Task t = taskRepository.findByIdAndUser(task.getTaskId(), user);
+
+            if (t != null) {
+                if (task.getDueDate() != null) {
+                    t.setScedule(new Scedule(task.getDueDate()));
+                } else if (task.getRecurrence() != null && task.getRecurrence().size() > 0) {
+                    t.setScedule(new Scedule(task.getRecurrence()));
+                } else {
+                    t.setScedule(new Scedule());
+                }
+            }
+            return t;
+        }
+        //TODO: add error handling :)
+        return null;
+
+    }
+
 
 }

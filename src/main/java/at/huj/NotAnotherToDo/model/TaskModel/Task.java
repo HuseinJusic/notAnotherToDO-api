@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,6 +44,16 @@ public class Task {
     public Task(User user, Scedule scedule, TaskBody taskBody) {
         this(user, taskBody);
         this.scedule = scedule;
+    }
+
+    public void toggle(){
+        this.getStatus().setFinished(!getStatus().isFinished());
+
+        //TODO: implement finished on Time logic after sceduling od tasks
+        /*Date date = new Date();
+        if(this.getScedule().getTo().after(date) && this.getStatus().isFinished()){
+            this.getStatus().setFinishedOnTime(!this.getStatus().isFinishedOnTime());
+        }*/
     }
 
     public String getId() {

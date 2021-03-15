@@ -4,19 +4,26 @@ import at.huj.NotAnotherToDo.model.TaskModel.ETaskBody;
 
 import javax.validation.constraints.*;
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class TaskRequest {
 
-    @NotBlank
+    private String taskId;
     private String taskTitle;
     private String taskDescription;
-
     private String taskType;
-
     private Date dueDate;
-
+    private List<Date> recurrence;
     private ETaskBody taskTypeBody;
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
 
     public String getTaskTitle() {
         return taskTitle;
@@ -56,5 +63,13 @@ public class TaskRequest {
 
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public List<Date> getRecurrence() {
+        return recurrence;
+    }
+
+    public void setRecurrence(List<Date> recurrence) {
+        this.recurrence = recurrence;
     }
 }
