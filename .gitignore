@@ -33,3 +33,8 @@ build/
 .vscode/
 
 docs/*
+
+### react-impl ###
+
+react-impl/node_modules
+react-impl/node_modules/*
