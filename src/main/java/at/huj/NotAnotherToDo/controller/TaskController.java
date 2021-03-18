@@ -50,17 +50,10 @@ public class TaskController {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         Task t = new Task(user, new SimpleTask());
-        t.setStatus(new TaskStatus());
         t.getTaskBody().setTaskTitle(task.getTaskTitle());
         t.getTaskBody().setTaskDescription(task.getTaskDescription());
 
-        if(task.getDueDate() != null){
-            t.setScedule(new Scedule(task.getDueDate()));
-        }else if(task.getRecurrence() != null && task.getRecurrence().size() > 0){
-            t.setScedule(new Scedule(task.getRecurrence()));
-        }else{
-            t.setScedule(new Scedule());
-        }
+        handleDateScedule(task, t);
 
         return taskRepository.save(t);
     }
@@ -122,7 +115,13 @@ public class TaskController {
         Task t = taskRepository.findByIdAndUser(task.getTaskId(), user);
 
         if(t != null){
-            t.toggle();
+
+            if(task.getDueDate() != null){
+                t.toggle(task.getDueDate());
+            }else{
+                t.toggle();
+            }
+
             taskRepository.save(t);
         }
         //TODO: add error handling (task not found...)
@@ -140,19 +139,23 @@ public class TaskController {
             Task t = taskRepository.findByIdAndUser(task.getTaskId(), user);
 
             if (t != null) {
-                if (task.getDueDate() != null) {
-                    t.setScedule(new Scedule(task.getDueDate()));
-                } else if (task.getRecurrence() != null && task.getRecurrence().size() > 0) {
-                    t.setScedule(new Scedule(task.getRecurrence()));
-                } else {
-                    t.setScedule(new Scedule());
-                }
+                handleDateScedule(task, t);
             }
             return t;
         }
         //TODO: add error handling :)
         return null;
 
+    }
+
+    private void handleDateScedule(@RequestBody TaskRequest task, Task t) {
+        if (task.getDueDate() != null) {
+            t.setScedule(new Scedule(task.getDueDate()));
+        } else if (task.getRecurrence() != null && task.getRecurrence().size() > 0) {
+            t.setScedule(new Scedule(task.getRecurrence()));
+        } else {
+            t.setScedule(new Scedule());
+        }
     }
 
 

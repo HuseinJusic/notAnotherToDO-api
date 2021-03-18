@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Document(collection = "tasks")
@@ -18,7 +19,6 @@ public class Task {
 
     private Scedule scedule;
     private TaskBody taskBody;
-    private TaskStatus status;
 
     @DBRef
     private Category category;
@@ -47,13 +47,24 @@ public class Task {
     }
 
     public void toggle(){
-        this.getStatus().setFinished(!getStatus().isFinished());
+        if(!scedule.hasRecurrence()){
+            scedule.getStatus().setFinished(!scedule.getStatus().isFinished());
+        }else{
+           //Throw error... cant toggle if no date is given !
+        }
+    }
 
-        //TODO: implement finished on Time logic after sceduling od tasks
-        /*Date date = new Date();
-        if(this.getScedule().getTo().after(date) && this.getStatus().isFinished()){
-            this.getStatus().setFinishedOnTime(!this.getStatus().isFinishedOnTime());
-        }*/
+    public void toggle(Date date){
+        if(scedule.hasRecurrence()){
+            List<Scedule> dateList = scedule.getRecurrence();
+
+            for(int i = 0; i < dateList.size(); i++){
+                if(dateList.get(i).getDue().equals(date)){
+                    dateList.get(i).getStatus().setFinished(!dateList.get(i).getStatus().isFinished());
+                    i = dateList.size();
+                }
+            }
+        }
     }
 
     public String getId() {
@@ -78,14 +89,6 @@ public class Task {
 
     public void setTaskBody(TaskBody taskBody) {
         this.taskBody = taskBody;
-    }
-
-    public TaskStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TaskStatus status) {
-        this.status = status;
     }
 
     public Set<Scale> getScales() {

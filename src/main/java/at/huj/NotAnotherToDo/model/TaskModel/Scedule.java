@@ -10,21 +10,33 @@ public class Scedule {
     private Date to;
     private Date due;
     private boolean isSceduled;
+    private boolean isActive = true;
     private List<Scedule> recurrence = new ArrayList<>();
+    private TaskStatus status = new TaskStatus();
 
     public Scedule(Date from, Date to) {
         this.from = from;
         this.to = to;
+        this.isSceduled = true;
     }
 
     public Scedule(Date due) {
         this.due = due;
+        this.from = due;
+        this.to = due;
+        this.isSceduled = true;
     }
 
     public Scedule(List<Date> recurrence) {
         for (Date date : recurrence) {
             this.recurrence.add(new Scedule(date));
         }
+
+        if(this.recurrence.size() > 0){
+            this.from = this.recurrence.get(0).getDue();
+            this.to = this.recurrence.get(this.recurrence.size() - 1).getDue();
+        }
+        this.isSceduled = true;
     }
 
     public Scedule() {
@@ -73,6 +85,22 @@ public class Scedule {
 
     public void setDue(Date due) {
         this.due = due;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
     }
 
     public void sceduleRecurrenceWeekly(){
