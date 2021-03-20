@@ -38,4 +38,19 @@ public abstract class TaskBody {
     public void setTaskType(ETaskBody taskType) {
         this.taskType = taskType;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TaskBody taskBody = (TaskBody) o;
+
+        return taskTitle != null ? taskTitle.equals(taskBody.taskTitle) : taskBody.taskTitle == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return taskTitle != null ? taskTitle.hashCode() : 0;
+    }
 }
