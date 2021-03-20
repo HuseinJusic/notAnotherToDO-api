@@ -21,7 +21,7 @@ public class Task {
     private TaskBody taskBody;
 
     @DBRef
-    private Category category;
+    private List<Category> category;
 
     @DBRef
     private Set<Scale> scales = new HashSet<>();
@@ -95,11 +95,11 @@ public class Task {
         return scales;
     }
 
-    public Category getCategory() {
+    public List<Category> getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(List<Category> category) {
         this.category = category;
     }
 
