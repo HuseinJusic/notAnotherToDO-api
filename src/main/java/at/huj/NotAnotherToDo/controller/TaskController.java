@@ -1,19 +1,23 @@
 package at.huj.NotAnotherToDo.controller;
 
+import at.huj.NotAnotherToDo.model.TaskModel.QTask;
 import at.huj.NotAnotherToDo.model.TaskModel.Scedule;
 import at.huj.NotAnotherToDo.model.TaskModel.Task;
 import at.huj.NotAnotherToDo.model.TaskModel.TaskBody.SimpleTask;
-import at.huj.NotAnotherToDo.model.TaskModel.TaskStatus;
 import at.huj.NotAnotherToDo.model.User;
 import at.huj.NotAnotherToDo.payload.request.TaskRequest;
 import at.huj.NotAnotherToDo.repository.TaskRepository;
 import at.huj.NotAnotherToDo.repository.UserRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -35,7 +39,7 @@ public class TaskController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<Task> getAll() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
@@ -81,6 +85,32 @@ public class TaskController {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         return taskRepository.findByIdAndUser(id, user);
+
+    }
+
+    @GetMapping("/date/{d}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public List<Task> getByDate(@PathVariable String d) {
+
+        try{
+            Date date = new Date();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date parsedDate = dateFormat.parse(d);
+            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+            date.setTime(timestamp.getTime());
+
+            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            User user = userRepository.findByUsername(userDetails.getUsername()).get();
+
+            QTask qtask = new QTask("task");
+            BooleanExpression filterByDue = qtask.scedule.due.eq(date);
+            BooleanExpression filtercontainsDate = qtask.scedule.recurrence.any().due.eq(date);
+
+            return (List<Task>) this.taskRepository.findAll(filterByDue.or(filtercontainsDate));
+        }catch(Exception e){
+            return null;
+        }
+
 
     }
 
