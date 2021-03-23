@@ -2,9 +2,11 @@ package at.huj.NotAnotherToDo.model.TaskModel.TaskBody;
 
 import at.huj.NotAnotherToDo.model.TaskModel.ETaskBody;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.springframework.data.annotation.Id;
 
 @JsonDeserialize(as = SimpleTask.class)
 public abstract class TaskBody {
+
     private ETaskBody taskType;
     private String taskTitle;
     private String taskDescription;

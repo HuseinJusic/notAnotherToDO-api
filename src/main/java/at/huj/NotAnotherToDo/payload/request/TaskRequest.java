@@ -1,6 +1,7 @@
 package at.huj.NotAnotherToDo.payload.request;
 
 import at.huj.NotAnotherToDo.model.TaskModel.ETaskBody;
+import at.huj.NotAnotherToDo.model.TaskModel.TaskBody.SimpleTask;
 
 import javax.validation.constraints.*;
 import java.util.Date;
@@ -13,6 +14,7 @@ public class TaskRequest {
     private String taskTitle;
     private String taskDescription;
     private String taskType;
+    private List<SimpleTask> simpleTasks;
     private Date dueDate;
     private List<Date> recurrence;
     private ETaskBody taskTypeBody;
@@ -71,5 +73,13 @@ public class TaskRequest {
 
     public void setRecurrence(List<Date> recurrence) {
         this.recurrence = recurrence;
+    }
+
+    public List<SimpleTask> getSimpleTasks() {
+        return simpleTasks;
+    }
+
+    public void setSimpleTasks(List<SimpleTask> simpleTasks) {
+        this.simpleTasks = simpleTasks;
     }
 }

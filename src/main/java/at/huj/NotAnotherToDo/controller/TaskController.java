@@ -1,9 +1,12 @@
 package at.huj.NotAnotherToDo.controller;
 
+import at.huj.NotAnotherToDo.model.TaskModel.ETaskBody;
 import at.huj.NotAnotherToDo.model.TaskModel.QTask;
 import at.huj.NotAnotherToDo.model.TaskModel.Scedule;
 import at.huj.NotAnotherToDo.model.TaskModel.Task;
+import at.huj.NotAnotherToDo.model.TaskModel.TaskBody.MultiTask;
 import at.huj.NotAnotherToDo.model.TaskModel.TaskBody.SimpleTask;
+import at.huj.NotAnotherToDo.model.TaskModel.TaskBody.TaskBody;
 import at.huj.NotAnotherToDo.model.User;
 import at.huj.NotAnotherToDo.payload.request.TaskRequest;
 import at.huj.NotAnotherToDo.repository.TaskRepository;
@@ -53,14 +56,21 @@ public class TaskController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
-        Task t = new Task(user, new SimpleTask());
+        Task t = new Task(user, getTaskBody(task));
         t.getTaskBody().setTaskTitle(task.getTaskTitle());
         t.getTaskBody().setTaskDescription(task.getTaskDescription());
+
+        if(t.getTaskBody().getTaskType() == ETaskBody.MULTI && task.getSimpleTasks().size() > 0){
+            MultiTask multiTask = (MultiTask) t.getTaskBody();
+            multiTask.addSimpleTask(task.getSimpleTasks());
+        }
 
         handleDateScedule(task, t);
 
         return taskRepository.save(t);
     }
+
+
 
     @PostMapping("/update")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
@@ -185,6 +195,17 @@ public class TaskController {
             t.setScedule(new Scedule(task.getRecurrence()));
         } else {
             t.setScedule(new Scedule());
+        }
+    }
+
+    private TaskBody getTaskBody(TaskRequest task) {
+        //TODO: maybe throw no such thing exception ??
+
+        switch(task.getTaskType()){
+            case "MULTI":
+                return new MultiTask();
+            default:
+                return new SimpleTask();
         }
     }
 

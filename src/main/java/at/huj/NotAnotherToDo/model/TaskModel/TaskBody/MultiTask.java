@@ -9,6 +9,13 @@ public class MultiTask extends TaskBody{
 
     List<CheckItem> tasks = new ArrayList<>();
 
+    public MultiTask(List<SimpleTask> list) {
+        this.addSimpleTask(list);
+    }
+
+    public MultiTask() {
+    }
+
     @Override
     public ETaskBody type() {
         return ETaskBody.MULTI;
@@ -41,6 +48,12 @@ public class MultiTask extends TaskBody{
             return true;
         }
         return false;
+    }
+
+    public void addSimpleTask(List<SimpleTask> list){
+        for (SimpleTask simpleTask : list) {
+            this.addSimpleTask(simpleTask);
+        }
     }
 
     public boolean removeSimpleTask(SimpleTask t){
